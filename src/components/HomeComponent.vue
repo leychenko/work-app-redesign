@@ -91,16 +91,16 @@
                     </div>
                     <div class="activity-stats">
                         <div>
-                            <strong>{{ declarations.length }}</strong>
-                            <span>декларацій</span>
+                            <strong>{{ currentMonthActivity.declarations }}</strong>
+                            <span>декларацій за місяць</span>
                         </div>
                         <div>
-                            <strong>{{ financeEntries.length }}</strong>
-                            <span>фінансових записів</span>
+                            <strong>{{ currentMonthActivity.finance }}</strong>
+                            <span>фінансових записів за місяць</span>
                         </div>
                         <div>
-                            <strong>{{ payments.length }}</strong>
-                            <span>актів</span>
+                            <strong>{{ currentMonthActivity.payments }}</strong>
+                            <span>актів за місяць</span>
                         </div>
                     </div>
                 </section>
@@ -164,6 +164,7 @@ export default {
         }),
         ...mapGetters('paymentList', {
             payments: 'getList',
+            getTaxForMonth: 'getTaxForMonth',
             getAllTaxForThreeMonth: 'getAllTaxForThreeMonth',
         }),
         countBonus() {
@@ -183,13 +184,57 @@ export default {
             return new Date().getFullYear()
         },
         monthTax() {
-            return Number(this.getTotalTaxValue && this.getTotalTaxValue.resultCorrectMonth) || 0
+            return Number(
+                this.getTaxForMonth &&
+                this.getTaxForMonth.resultCorrectTaxForMonth
+            ) || 0
         },
         getSumSalary() {
-            return Number(this.getSalary || 0) - this.countBonus - this.monthTax
+
+            const now = new Date()
+            const month = now.getMonth() + 1
+            const year = now.getFullYear()
+
+            const total = (this.financeEntries || [])
+                .filter(item => {
+                    const parts = String(item?.date || '').split('.')
+                    return parts.length === 3 &&
+                        Number(parts[1]) === month &&
+                        Number(parts[2]) === year
+                })
+                .reduce((sum, item) => sum + Number(item?.sum || 0), 0)
+
+            return Math.ceil(total - total * 0.06 - this.countBonus)
+
         },
         getSumOnCardWithBonusAndTax() {
-            return Number(this.getAllTaxForThreeMonth || 0) + this.countBonus
+            return Number(this.getTaxForThreeMonth || this.getAllTaxForThreeMonth || 0) + this.countBonus
+        },
+        currentMonthActivity() {
+
+            const now = new Date()
+            const month = now.getMonth() + 1
+            const year = now.getFullYear()
+
+            const checkDate = (value) => {
+                const parts = String(value || '').split('.')
+                return parts.length === 3 &&
+                    Number(parts[1]) === month &&
+                    Number(parts[2]) === year
+            }
+
+            return {
+                declarations: Math.floor(
+							this.financeEntries
+								.filter(item => checkDate(item.date))
+								.reduce(
+										(sum, item) => sum + Number(item.sum || 0),
+										0
+								) / 4500
+						),
+                finance: (this.financeEntries || []).filter(item => checkDate(item.date)).length,
+                payments: (this.payments || []).filter(item => checkDate(item.date)).length,
+            }
         },
     },
     created() {

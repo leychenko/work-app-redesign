@@ -7,6 +7,7 @@
 <script>
 import { Chart } from 'chart.js/auto'
 import { mapActions, mapGetters } from 'vuex'
+import { markRaw } from 'vue'
 
 export default {
     name: 'ChartComponent',
@@ -25,42 +26,64 @@ export default {
     computed: {
         ...mapGetters('financeData', ['getTest', 'getSalaryPerMonthMoney']),
         monthlyValues() {
-            return this.months.map((month, index) => Number(this.getSalaryPerMonthMoney(index + 1)) || 0)
-        },
+
+    const values = this.months.map((month, index) => {
+
+        return Number(
+            this.getSalaryPerMonthMoney(index + 1)
+        ) || 0
+
+    })
+
+    return JSON.parse(JSON.stringify(values))
+
+},
     },
     watch: {
         monthlyValues: {
             deep: true,
             handler(values) {
                 if (!this.chart) return
-                this.chart.data.datasets[0].data = values
-                this.chart.update()
+                this.chart.data.datasets[0].data = Array.from(values)
+                this.chart.update('none')
             },
         },
     },
     mounted() {
-        if (!this.getTest.length) this.loadList()
+
+    if (!this.getTest || !this.getTest.length) {
+        this.loadList()
+    }
+
+    this.$nextTick(() => {
         this.renderChart()
-    },
+    })
+
+},
     beforeUnmount() {
         if (this.chart) this.chart.destroy()
     },
     methods: {
         ...mapActions('financeData', ['loadList']),
         renderChart() {
+				if (this.chart) {
+					this.chart.destroy()
+					this.chart = null
+				}
+
             const context = this.$refs.chartCanvas
             const gradient = context.getContext('2d').createLinearGradient(0, 0, 0, 320)
             gradient.addColorStop(0, 'rgba(70, 224, 239, .7)')
             gradient.addColorStop(1, 'rgba(48, 114, 208, .04)')
 
-            this.chart = new Chart(context, {
+            this.chart = markRaw(new Chart(context, {
                 type: 'line',
                 data: {
                     labels: this.months,
                     datasets: [
                         {
                             label: String(new Date().getFullYear()),
-                            data: this.monthlyValues,
+                            data: [...this.monthlyValues],
                             borderColor: '#59e0e8',
                             backgroundColor: gradient,
                             borderWidth: 2,
@@ -133,7 +156,7 @@ export default {
                         },
                     },
                 },
-            })
+            }))
         },
     },
 }

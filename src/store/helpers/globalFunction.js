@@ -133,14 +133,17 @@ function getWeather(data) {
 export function test2(arr, titleVal, val) {
     const period = currentPeriod()
     const quarterStart = Math.floor((period.month - 1) / 3) * 3 + 1
+
     const result = asList(arr).filter((item) => {
-        const date = parseDate(item && item.cashDay)
+        const date = parseDate(item && item.date)
+
         return Boolean(
             date &&
-                date.year === period.year &&
-                date.month >= quarterStart &&
-                date.month <= quarterStart + 2
+            date.year === period.year &&
+            date.month >= quarterStart &&
+            date.month <= quarterStart + 2
         )
     })
+
     return Math.ceil(sumBy(result, titleVal) * taxRateForYear(val, period.year))
 }
