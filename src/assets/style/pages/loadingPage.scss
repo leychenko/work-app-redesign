@@ -1,0 +1,15 @@
+.wrapper-loading {
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 100;
+	height: 100vh;
+	width: 100vw;
+	background-color: rgba(255, 255, 255, 0.785);
+}
+.icon {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%,-50%);
+}

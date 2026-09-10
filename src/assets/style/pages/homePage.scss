@@ -1,0 +1,41 @@
+.card {
+	// @include adaptiveValue("padding-top", 100, 30);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+	gap: 10px;
+		// .card__item
+		&__item {
+			@include adaptiveValue("padding", 15, 7);
+			font-size: 18px;
+			border: 2px solid white;
+			background-color: #fff;
+			border-radius: 10px;
+			@media (max-width: 945px){
+				padding-top: 40px;
+		//   text-align: center;
+		  padding: 5px;
+	}
+		}
+}
+.item {
+	display: flex;
+	flex-direction: column;
+	gap: toRem(20);
+	
+		// .item__info
+		&__info {
+			p{
+				&:not(:last-child) {
+					margin-bottom: toRem(22);
+				}
+			}
+			span{
+				@include adaptiveValue("font-size", 23, 16);
+				font-weight: 700;
+				color: $orange;
+				
+			}
+			
+		}
+}

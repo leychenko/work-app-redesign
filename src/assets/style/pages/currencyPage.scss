@@ -1,0 +1,24 @@
+.currency {
+	max-width: toRem(150);
+		// .currency__container
+		&__container {
+		}
+		// .currency__content
+		&__content {
+		}
+}
+.content {
+	display: flex;
+	flex-direction: column;
+	color: #fcfbfbdf;
+	background-color: #ce08088a;
+	padding: toRem(10);
+	position: relative;
+	z-index: 5;
+		// .content__head
+		&__head {
+		}
+		// .content__info
+		&__info {
+		}
+}

@@ -1,0 +1,61 @@
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.form {
+	display: flex;
+	flex-direction: column;
+	@include adaptiveValue("padding", 40, 10);
+	border: 2px solid black;
+	gap: 25px;
+	border-radius: 10px;
+ background: #fff5;
+  backdrop-filter: blur(15px);
+		// .form__line
+		&__line {
+			padding: 10px;
+			display: flex;
+			align-items: center;
+			font-weight: 700;
+			gap: 20px;
+			justify-content: space-between;
+			@media (max-width: em(620)){
+				 flex-direction: column; 
+				 gap: 30px;
+			}
+		}
+		// .form__label
+		&__label {
+			@include adaptiveValue("font-size", 24, 20);
+			color: black;
+			cursor: pointer;
+		}
+		// .form__input
+		&__input {
+			flex: 0 1 50%;
+			padding: 5px;
+			@include adaptiveValue("font-size", 25, 18);
+			border-radius: 5px;
+			background-color: #fff;
+			outline: 2px solid orangered;
+			&:focus{
+					background-color: rgb(224, 245, 202);
+				}
+				@media (max-width: em(620)){
+					  flex: 1 1 100%;
+				}
+			
+		}
+		// .form__button
+		&__button {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+		}
+}
+
+.message{
+	color: $redColor;
+	font-weight: 700;
+	@include adaptiveValue("font-size", 24, 18);
+}
