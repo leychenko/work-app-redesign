@@ -48,16 +48,18 @@
                                 />
                             </div>
                             <div class="field">
-                                <label for="act-date">Дата акта</label>
-                                <input
-                                    id="act-date"
-                                    v-model.trim="paymentDataObj.date"
-                                    type="text"
-                                    inputmode="numeric"
-                                    autocomplete="off"
-                                    placeholder="ДД.ММ.РРРР"
-                                />
-                            </div>
+												<label for="act-date">Дата акта</label>
+												<input
+													id="act-date"
+													v-model="paymentDataObj.date"
+													type="text"
+													inputmode="numeric"
+													autocomplete="off"
+													placeholder="ДД.ММ.РРРР"
+													maxlength="10"
+													@input="onDateInput"
+												/>
+											</div>
                             <div class="field">
                                 <label for="act-number">Номер акта</label>
                                 <input
@@ -144,6 +146,18 @@ export default {
     },
     methods: {
         ...mapActions('paymentList', ['addItem', 'loadPaymentList']),
+		  onDateInput(e) {
+        const digits = e.target.value.replace(/\D/g, '').slice(0, 8)
+        let formatted = digits
+        if (digits.length > 4) {
+            formatted = `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`
+        } else if (digits.length > 2) {
+            formatted = `${digits.slice(0, 2)}.${digits.slice(2)}`
+        }
+        this.paymentDataObj.date = formatted
+        // синхронизируем реальное значение инпута с форматированным
+        e.target.value = formatted
+    },
         addData() {
             this.message = null
             this.successMessage = null

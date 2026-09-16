@@ -1,5 +1,5 @@
 import firebaseDB from '@/firebase-config'
-import { doc, collection, getDocs, addDoc, deleteDoc, updateDoc, query, where } from 'firebase/firestore/lite'
+import { doc, collection, getDocs, setDoc, deleteDoc, updateDoc, query, where } from 'firebase/firestore/lite'
 
 class DbOperations {
     constructor(collectionTitle) {
@@ -29,7 +29,12 @@ class DbOperations {
 
     addItem(item) {
         return new Promise((resolve, reject) => {
-            addDoc(this.dbCollection, item)
+            const newDoc = doc(this.dbCollection)
+
+            setDoc(newDoc, {
+                ...item, // 1. Сначала копируем все данные из переданного объекта
+                id: newDoc.id, // 2. Записываем id документа поверх любых возможных значений из item
+            })
                 .then(() => {
                     resolve(true)
                 })
@@ -38,7 +43,6 @@ class DbOperations {
                 })
         })
     }
-
     deleteItem(id) {
         return new Promise((resolve, reject) => {
             deleteDoc(doc(this.dbCollection, id))
